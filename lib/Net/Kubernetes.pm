@@ -1,15 +1,15 @@
-use P6::Net::Kubernetes::Namespace;
-use P6::Net::Kubernetes::Role::APIAccess;
+use Net::Kubernetes::Namespace;
+use Net::Kubernetes::Role::APIAccess;
 use JSON::Tiny;
 
-class P6::Net::Kubernetes does P6::Net::Kubernetes::Role::APIAccess {
-    has P6::Net::Kubernetes::Namespace $!default_namespace;
+class Net::Kubernetes does Net::Kubernetes::Role::APIAccess {
+    has Net::Kubernetes::Namespace $!default_namespace;
 
     method get_namespace($namespace){
         my $res = $.create_request(:method('GET'), :url($.path() ~ '/namespaces/' ~ $namespace)).run();
         if ($res.success) {
             my %ns = from-json($res.content).pairs;
-            return P6::Net::Kubernetes::Namespace.new(:url($.url), :bash_path(%ns<metdata><selfLink>), :api_version($.api_version), :namespace($namespace), :username($.username), :password($.password), :token($.token))
+            return Net::Kubernetes::Namespace.new(:url($.url), :bash_path(%ns<metdata><selfLink>), :api_version($.api_version), :namespace($namespace), :username($.username), :password($.password), :token($.token))
         }
     }
 

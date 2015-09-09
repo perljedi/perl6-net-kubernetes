@@ -1,7 +1,7 @@
 use JSON::Tiny;
 use HTTP::Client;
 
-role P6::Net::Kubernetes::Role::APIAccess {
+role Net::Kubernetes::Role::APIAccess {
     has Str $.url is readonly  = 'http://localhost:8080';
     has $.api_version is readonly = 'v1';
     has $.base_path is readonly = '/api/' ~ $!api_version;
