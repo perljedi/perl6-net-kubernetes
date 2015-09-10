@@ -1,4 +1,3 @@
-use JSON::Tiny;
 use HTTP::Client;
 
 role Net::Kubernetes::Role::APIAccess {

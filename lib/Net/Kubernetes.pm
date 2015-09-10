@@ -1,6 +1,6 @@
 use Net::Kubernetes::Namespace;
 use Net::Kubernetes::Role::APIAccess;
-use JSON::Tiny;
+use JSON::Fast;
 
 class Net::Kubernetes does Net::Kubernetes::Role::APIAccess {
     has Net::Kubernetes::Namespace $!default_namespace;

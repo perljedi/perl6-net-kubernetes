@@ -12,7 +12,7 @@ class Net::Kubernetes::Namespace does Net::Kubernetes::Role::APIAccess does Net:
         say $res;
         if ($res.success) {
             my %pod = from-json($res.content).pairs;
-            return $.create_resource_object(%pod, 'Pod');
+            return $.create_resource_object(%pod);
             #return Net::Kubernetes::Resource.new(:url($.url), :base_path(%pod<metadata><selfLink>), :metadata(%pod<metadata>), :api_version($.api_version), :username($.username), :password($.password), :token($.token))
         }
     }
@@ -21,7 +21,13 @@ class Net::Kubernetes::Namespace does Net::Kubernetes::Role::APIAccess does Net:
         say $res;
         if ($res.success) {
             my %pods = from-json($res.content).pairs;
-            #say %pods;
+            my @pods = ();
+            for @(%pods<items>) -> $item {
+                my %pod = %($item);
+                %pod<api_version> = %pods<apiVersion>;
+                @pods.push: $.create_resource_object(%pod, 'Pod');
+            }
+            return @pods;
         }
     }
 }
