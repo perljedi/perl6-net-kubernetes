@@ -9,7 +9,9 @@ class Net::Kubernetes does Net::Kubernetes::Role::APIAccess {
         my $res = $.create_request(:method('GET'), :url($.path() ~ '/namespaces/' ~ $namespace)).run();
         if ($res.success) {
             my %ns = from-json($res.content).pairs;
-            return Net::Kubernetes::Namespace.new(:url($.url), :bash_path(%ns<metdata><selfLink>), :api_version($.api_version), :namespace($namespace), :username($.username), :password($.password), :token($.token))
+            say %ns;
+            say %ns<metadata><selfLink>;
+            return Net::Kubernetes::Namespace.new(:url($.url), :base_path(%ns<metadata><selfLink>), :api_version($.api_version), :namespace($namespace), :username($.username), :password($.password), :token($.token))
         }
     }
 
