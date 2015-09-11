@@ -17,17 +17,37 @@ class Net::Kubernetes::Namespace does Net::Kubernetes::Role::APIAccess does Net:
         }
     }
     method list_pods () {
-        my $res = $.create_request(:method('GET'), :url($.path() ~ '/pods')).run();
+        return $.list_object_by_type(:type('Pod')).list;
+    }
+    method list_events () {
+        return $.list_object_by_type(:type('Event')).list;
+    }
+
+    method list_rc () {
+        return $.list_object_by_type(:type('ReplicationController')).list;
+    }
+    Net::Kubernetes::Namespace.^add_method("list_replicationcontrollers", Net::Kubernetes::Namespace.^method_table<list_rc>);
+    Net::Kubernetes::Namespace.^compose;
+
+    method list_secrets () {
+        return $.list_object_by_type(:type('Secret')).list;
+    }
+
+    method list_object_by_type(:$type, :$path? is copy) {
+        if ! $path.defined {
+            $path = $type.lc ~ 's';
+        }
+        my $res = $.create_request(:method('GET'), :url($.path() ~ '/' ~ $path)).run();
         say $res;
         if ($res.success) {
-            my %pods = from-json($res.content).pairs;
-            my @pods = ();
-            for @(%pods<items>) -> $item {
-                my %pod = %($item);
-                %pod<api_version> = %pods<apiVersion>;
-                @pods.push: $.create_resource_object(%pod, 'Pod');
+            my %objects = from-json($res.content).pairs;
+            my @objects = ();
+            for @(%objects<items>) -> $item {
+                my %object = %($item);
+                %object<api_version> = %objects<apiVersion>;
+                @objects.push: $.create_resource_object(%object, $type);
             }
-            return @pods;
+            return @objects;
         }
     }
 }

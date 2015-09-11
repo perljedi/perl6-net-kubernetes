@@ -13,8 +13,17 @@ role Net::Kubernetes::Role::ResourceFactory {
     	%create_args<url> = $.url;
     	%create_args<base_path> = %object<metadata><selfLink>;
         given $kind {
+            when 'Event' {
+                return Net::Kubernetes::Resource::Event.new(|%create_args);
+            }
             when 'Pod' {
                 return Net::Kubernetes::Resource::Pod.new(|%create_args);
+            }
+            when 'ReplicationController' {
+                return Net::Kubernetes::Resource::ReplicationController.new(|%create_args);
+            }
+            when 'Secret' {
+                return Net::Kubernetes::Resource::Secret.new(|%create_args);
             }
             when 'Service' {
                 return Net::Kubernetes::Resource::Service.new(|%create_args);

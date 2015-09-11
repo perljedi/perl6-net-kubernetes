@@ -25,11 +25,23 @@ role Net::Kubernetes::Resource::Role::Spec {
     has %.spec;
 }
 
+class Net::Kubernetes::Resource::Event
+    is Net::Kubernetes::Resource {
+    has Str $.reason;
+    has Str $.message;
+    has Str $.firstTimeStamp;
+    has Str $.lastTimeStamp;
+    has Int $.count;
+    has %.source;
+    has %.involvedObject;
+}
+
 class Net::Kubernetes::Resource::Pod
     is Net::Kubernetes::Resource
     does Net::Kubernetes::Resource::Role::State
     does Net::Kubernetes::Resource::Role::Spec
     does Net::Kubernetes::Role::APIAccess {
+
     method logs(%options?) {
         my $req = $.create_request(:method('GET'), :url($.path ~ '/log'));
         $req.add-field(|%options);
@@ -40,8 +52,29 @@ class Net::Kubernetes::Resource::Pod
     }
 }
 
+class Net::Kubernetes::Resource::ReplicationController
+    is Net::Kubernetes::Resource
+    does Net::Kubernetes::Resource::Role::State
+    does Net::Kubernetes::Resource::Role::Spec {
+    method scale(){
+
+    }
+}
+
 class Net::Kubernetes::Resource::Service
     is Net::Kubernetes::Resource
     does Net::Kubernetes::Resource::Role::State
     does Net::Kubernetes::Resource::Role::Spec {
+}
+
+class Net::Kubernetes::Resource::Secret
+    is Net::Kubernetes::Resource
+    {
+
+    has Str $.type;
+    has %.data;
+
+    method render (%args) {
+
+    }
 }
